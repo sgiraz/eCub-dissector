@@ -1,0 +1,62 @@
+###############################################################################
+# Protocol identification
+# A protocol name must be unique : do not choose an already existent name
+###############################################################################
+PROTONAME         eCub Protocol
+PROTOSHORTNAME    eCub
+PROTOABBREV       ecub
+
+# Specify when the dissector is used.
+PARENT_SUBFIELD          udp.port
+PARENT_SUBFIELD_VALUES   12345
+
+###############################################################################
+# Protocol specific information
+# All following parameters refers to what is defined into PROTO_TYPE_DEFINITIONS
+# section, so what is inside <file>.desc
+###############################################################################
+
+# Message's header type.
+# The message must begin by the header.
+# The header must contains MSG_ID_FIELD_NAME and any MSG_SUMMARY_SUBSIDIARY_FIELD_NAMES.
+MSG_HEADER_TYPE                        T_msg_header_type_wsgd
+
+# Field which permits to identify the message type.
+# Must be part of MSG_HEADER_TYPE.
+MSG_ID_FIELD_NAME                      Type
+
+# Optional parameter.
+# Specifies the length (in bytes) of the message's header.
+# Must be a constant (not an expression).
+MSG_HEADER_LENGTH                      24
+
+# Optional parameter.
+# Fields displayed into the 1st line.
+# The specified fields must be part of MSG_HEADER_TYPE.
+MSG_SUMMARY_SUBSIDIARY_FIELD_NAMES     size_of_body
+
+# Optional parameter.
+# Only effect is to be able to use (*) or [*] at the end of the message.
+# Specifies the length (in bytes) of the message's trailer.
+# Must be a constant (not an expression).
+MSG_TRAILER_LENGTH                     4
+
+# Message size field, from field in header
+MSG_TOTAL_LENGTH                       24 + size_of_body + 4
+
+# Message body type
+MSG_MAIN_TYPE                          T_msg_switch(Type)
+
+###############################################################################
+# Data's format definition
+# At the end of the file only.
+# Could have many includes.
+###############################################################################
+
+# Definitions of the packet's format.
+PROTO_TYPE_DEFINITIONS
+
+# Debug flag only for interpreting the types (initialization)
+DEBUG
+
+include  eCub_proto.fdesc;

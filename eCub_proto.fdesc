@@ -1,0 +1,169 @@
+# eCub Protocolo field descriptions
+
+###############################################################################
+# User defined types
+###############################################################################
+enum8 T_ROPC
+{
+    ask         1
+    say         2
+    set         3
+    sig         4
+    rst         5
+}
+
+bitfield8 T_CTRL
+{
+  uint2             confinfo;             # lower level bits
+  uint1             plustime;
+  uint1             plussign;
+  uint1             rqsttime;
+  uint1             rqstconf;
+  uint2             version;              # higher level bits
+}
+
+# struct tags
+# {
+#   var string[4]                  var_str_array = "cent trente six";
+
+#   #set var_str_array[0] = "ciao";
+# }
+
+function string tag2string (in uint8 endpoint, in uint8 entity, in uint8 tag)
+{
+    hide var string[2][4]       var_str_array = "Not yet implemented";
+    set var_str_array[0][0] =                   "{management, comm}";
+    set var_str_array[0][1] =                   "{management, appl}";
+    set var_str_array[0][3] =                   "{management, service}";
+    set var_str_array[1][0] =                   "{motioncontrol, joint}";
+    set var_str_array[1][1] =                   "{motioncontrol, motor}";
+
+    #return tags.var_str_array[1];
+    #return "Work in progress";
+    return var_str_array[endpoint][entity];
+}
+
+
+
+struct T_ID
+{
+    uint8             tag;
+    uint8             number;
+    uint8             entity;
+    uint8             endpoint;
+
+    note ("%s: %s", ropc, tag2string(endpoint, entity, tag));
+    #print ("modif var_str_array[var_idx+1] = %s", var_str_array[var_idx+1]);
+}
+
+
+
+function uint16 getEffectiveSizeFrom (in uint16 datasize)
+{
+    # if datasize is multiple of 4, return datasize
+    if (datasize % 4 == 0)
+    {
+        return datasize;
+    }
+    # else return padded with zeros to become of total length a multiple of four
+    else
+    {
+        return datasize + (4 - (datasize % 4));
+    }
+}
+
+struct T_ROP
+{
+    T_CTRL                                  ctrl;
+    T_ROPC                                  ropc;
+    uint16                                  datasize;
+    T_ID                                    id;
+
+    if (datasize > 0)
+    {
+        hide uint8[getEffectiveSizeFrom (datasize)]  data;
+    }
+    
+    if (ctrl.plussign == 1)
+    {
+        uint32                              signature;
+    }
+
+    if (ctrl.plustime == 1)
+    {
+        int64                               time;
+    }
+}
+
+
+###############################################################################
+# Message identifier
+###############################################################################
+enum32  T_Type_message
+{
+    start_code       305419896 # Used to recognize a valid ROPframe: 0x12345678
+}
+
+
+###############################################################################
+# Header
+###############################################################################
+struct  T_msg_header_type_wsgd
+{
+    byte_order       little_endian;
+    
+    T_Type_message{d=hex}    Type; # start_code
+    uint16                   size_of_body;
+    uint16                   number_of_rops;
+    int64                    sequence_number;
+    int64                    age_of_frame;
+}
+
+struct  T_msg_header_type
+{
+  T_msg_header_type_wsgd  "";
+}
+
+
+###############################################################################
+# Messages
+###############################################################################
+# # 1st Message
+# # All your messages begin by the header.
+# # The data byte order is already specified inside the header.
+struct  T_msg_cs_start
+{
+  T_msg_header_type                          Header;
+  T_ROP[Header.number_of_rops]               ROP;
+  uint32{d=hex}                              Footer;
+}
+
+
+###############################################################################
+# Main switch
+###############################################################################
+# Message switch case
+# You need to link each message identifier with the corresponding message type.
+# You must define a switch with a parameter = message identifier type.
+switch  T_msg_switch  T_Type_message
+{
+case  T_Type_message::start_code : T_msg_cs_start "";  # "" permits to avoid a useless supplementary tree
+
+default        : 
+  # fatal ("Unknow msg identifier %d (%s)", Type, Type);
+  T_msg_header_type        Header;
+  raw(*)                   the_end_of_the_message;
+}
+
+###############################################################################
+# Main type
+# With the current definition,
+#  "MSG_MAIN_TYPE      T_msg_main_type" is strictly identical to
+#  "MSG_MAIN_TYPE      T_msg_switch(Type)"
+#  inside <file>.wsgd
+###############################################################################
+
+# struct  T_msg_main_type
+# {
+#   T_msg_switch(Type)    "";
+# }
