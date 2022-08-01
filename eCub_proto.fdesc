@@ -31,6 +31,7 @@ bitfield8 T_CTRL
 
 function string tag2string (in uint8 endpoint, in uint8 entity, in uint8 tag)
 {
+    # tags string array
     hide var string[2][4]       var_str_array = "Not yet implemented";
     set var_str_array[0][0] =                   "{management, comm}";
     set var_str_array[0][1] =                   "{management, appl}";
@@ -38,8 +39,6 @@ function string tag2string (in uint8 endpoint, in uint8 entity, in uint8 tag)
     set var_str_array[1][0] =                   "{motioncontrol, joint}";
     set var_str_array[1][1] =                   "{motioncontrol, motor}";
 
-    #return tags.var_str_array[1];
-    #return "Work in progress";
     return var_str_array[endpoint][entity];
 }
 
@@ -47,10 +46,10 @@ function string tag2string (in uint8 endpoint, in uint8 entity, in uint8 tag)
 
 struct T_ID
 {
-    uint8             tag;
-    uint8             number;
-    uint8             entity;
-    uint8             endpoint;
+    uint8{d=hex}             tag;
+    uint8{d=hex}             number;
+    uint8{d=hex}             entity;
+    uint8{d=hex}             endpoint;
 
     note ("%s: %s", ropc, tag2string(endpoint, entity, tag));
     #print ("modif var_str_array[var_idx+1] = %s", var_str_array[var_idx+1]);
