@@ -32,24 +32,74 @@ bitfield8 T_CTRL
 function string tag2string (in uint8 endpoint, in uint8 entity, in uint8 tag)
 {
     # tags string array
-    hide var string[2][4]       var_str_array = "Not yet implemented";
-    set var_str_array[0][0] =                   "{management, comm}";
-    set var_str_array[0][1] =                   "{management, appl}";
-    set var_str_array[0][3] =                   "{management, service}";
-    set var_str_array[1][0] =                   "{motioncontrol, joint}";
-    set var_str_array[1][1] =                   "{motioncontrol, motor}";
+    hide var string[2][4][24]       var_str_array = "Not yet implemented";
+    # endpoint mn (0), entity comm (0)
+    set var_str_array[0][0][0] =                "{eoprot_tag_mn_comm_wholeitem}";
+    set var_str_array[0][0][1] =                "{eoprot_tag_mn_comm_status}";
+    set var_str_array[0][0][2] =                "{eoprot_tag_mn_comm_status_managementprotocolversion}";
+    set var_str_array[0][0][3] =                "{eoprot_tag_mn_comm_cmmnds_command_querynumof}";
+    set var_str_array[0][0][4] =                "{eoprot_tag_mn_comm_cmmnds_command_queryarray}";
+    set var_str_array[0][0][5] =                "{eoprot_tag_mn_comm_cmmnds_command_replynumof}";
+    set var_str_array[0][0][6] =                "{eoprot_tag_mn_comm_cmmnds_command_replyarray}";
+    set var_str_array[0][0][7] =                "{eoprot_tag_mn_comm_cmmnds_command_config}";
 
-    return var_str_array[endpoint][entity];
+    # endpoint mn (0), entity appl (1)
+    set var_str_array[0][1][0] =                "{eoprot_tag_mn_appl_wholeitem}";
+    set var_str_array[0][1][1] =                "{eoprot_tag_mn_appl_config}";
+    set var_str_array[0][1][2] =                "{eoprot_tag_mn_appl_config_txratedivider}";
+    set var_str_array[0][1][3] =                "{eoprot_tag_mn_appl_status}";
+    set var_str_array[0][1][4] =                "{eoprot_tag_mn_appl_cmmnds_go2state}";
+    set var_str_array[0][1][5] =                "{eoprot_tag_mn_appl_cmmnds_timeset}";
+
+    # endpoint mn (0), entity info (2)
+    set var_str_array[0][2][0] =                "{eoprot_tag_mn_info_wholeitem}";
+    set var_str_array[0][2][1] =                "{eoprot_tag_mn_info_config}";
+    set var_str_array[0][2][2] =                "{eoprot_tag_mn_info_config_enabled}";
+    set var_str_array[0][2][3] =                "{eoprot_tag_mn_info_status}";
+    set var_str_array[0][2][4] =                "{eoprot_tag_mn_info_status_basic}";
+
+    # endpoint mn (0), entity service (3)
+    set var_str_array[0][3][0] =                "{eoprot_tag_mn_service_wholeitem}";
+    set var_str_array[0][3][1] =                "{eoprot_tag_mn_service_status_commandresult}";
+    set var_str_array[0][3][2] =                "{eoprot_tag_mn_service_cmmnds_command}";
+
+    # endpoint mc (1), entity joint (0)
+    set var_str_array[1][0][0] =                "{eoprot_tag_mc_joint_wholeitem}";
+    set var_str_array[1][0][1] =                "{eoprot_tag_mc_joint_config}";
+    set var_str_array[1][0][2] =                "{eoprot_tag_mc_joint_config_pidposition}";
+    set var_str_array[1][0][3] =                "{eoprot_tag_mc_joint_config_pidvelocity}";
+    set var_str_array[1][0][4] =                "{eoprot_tag_mc_joint_config_pidtorque}";
+    set var_str_array[1][0][5] =                "{eoprot_tag_mc_joint_config_userlimits}";
+    set var_str_array[1][0][6] =                "{eoprot_tag_mc_joint_config_impedance}";
+    set var_str_array[1][0][7] =                "{eoprot_tag_mc_joint_config_motor_params}";
+    set var_str_array[1][0][8] =                "{eoprot_tag_mc_joint_config_tcfiltertype}";
+    set var_str_array[1][0][9] =                "{eoprot_tag_mc_joint_status}";
+    set var_str_array[1][0][10] =                "{eoprot_tag_mc_joint_status_core}";
+    set var_str_array[1][0][11] =                "{eoprot_tag_mc_joint_status_target}";
+    set var_str_array[1][0][12] =                "{eoprot_tag_mc_joint_status_core_modes_controlmodestatus}";
+    set var_str_array[1][0][13] =                "{eoprot_tag_mc_joint_status_core_modes_interactionmodestatus}";
+    set var_str_array[1][0][14] =                "{eoprot_tag_mc_joint_status_core_modes_ismotiondone}";
+    set var_str_array[1][0][15] =                "{eoprot_tag_mc_joint_status_addinfo_multienc}";
+    set var_str_array[1][0][16] =                "{eoprot_tag_mc_joint_status_debug}";
+    set var_str_array[1][0][17] =                "{eoprot_tag_mc_joint_inputs}";
+    set var_str_array[1][0][18] =                "{eoprot_tag_mc_joint_inputs_externallymeasuredtorque}";
+    set var_str_array[1][0][19] =                "{eoprot_tag_mc_joint_cmmnds_calibration}";
+    set var_str_array[1][0][20] =                "{eoprot_tag_mc_joint_cmmnds_setpoint}";
+    set var_str_array[1][0][21] =                "{eoprot_tag_mc_joint_cmmnds_stoptrajectory}";
+    set var_str_array[1][0][22] =                "{eoprot_tag_mc_joint_cmmnds_controlmode}";
+    set var_str_array[1][0][23] =                "{eoprot_tag_mc_joint_cmmnds_interactionmode}";
+
+    return var_str_array[endpoint][entity][tag];
 }
 
 
 
 struct T_ID
 {
-    uint8{d=hex}             tag;
-    uint8{d=hex}             number;
-    uint8{d=hex}             entity;
-    uint8{d=hex}             endpoint;
+    uint8             tag;
+    uint8             number;
+    uint8             entity;
+    uint8             endpoint;
 
     note ("%s: %s", ropc, tag2string(endpoint, entity, tag));
     #print ("modif var_str_array[var_idx+1] = %s", var_str_array[var_idx+1]);
